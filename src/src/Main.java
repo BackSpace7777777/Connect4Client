@@ -1,21 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package src;
 
-/**
- *
- * @author tyle4760
- */
-public class Main {
+import java.awt.Graphics;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-    /**
-     * @param args the command line arguments
-     */
+public class Main {
+    private static JFrame frame;
+    private static JPanel panel;
+    private static GameManager gm;
     public static void main(String[] args) {
-        // TODO code application logic here
+        frame=new JFrame("Connect 4");//Setting up the frame
+        frame.setDefaultCloseOperation(3);
+        frame.setResizable(false);
+        frame.setLayout(null);
+        frame.setSize(640,640);
+        gm=new GameManager();
+        panel=new JPanel()
+        {
+            @Override
+            public void paintComponent(Graphics g)//Drawing code here
+            {
+                super.paintComponent(g);
+                g.clearRect(0, 0, panel.getWidth(), panel.getHeight());
+                gm.draw(g);
+                repaint();
+            }
+        };
+        panel.setBounds(0,0,frame.getHeight(),frame.getWidth());
+        frame.add(panel);
+        frame.setVisible(true);
     }
-    
 }
