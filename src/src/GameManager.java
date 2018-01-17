@@ -10,40 +10,46 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GameManager {
-    private boolean turn;
+    private boolean turn,isConnected;
     private Disk[][] slots=new Disk[7][6];
     private Socket socket;
     private BufferedReader in;
     private DataOutputStream out;
     private Thread inT,outT;
+    private int mouseX,mouseY;
+    private boolean mouseDown;
     public GameManager()
     {
-        
+        isConnected=false;
     }
     public void draw(Graphics g)
     {
-        
-    }
-    public void connect(boolean localHost,String ip)
-    {
-        if(localHost)
+        for(int x=0;x<7;x++)
         {
-            try {
-                socket=new Socket("localhost",9876);
-            } catch (IOException ex) {
-                Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        else 
-        {
-            try
+            for(int y=0;y<6;y++)
             {
-                socket=new Socket(ip,9876);
-            } catch (IOException ex) {
-                Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
+                if(slots[x][y]!=null)
+                {
+                    slots[x][y].draw(g);//Drawing all of the slots only if they are not null
+                }
             }
         }
-        if(socket!=null)
+    }
+    public void mouseInformation(boolean md,int x,int y)
+    {
+        mouseDown=md;
+        mouseX=x;
+        mouseY=y;
+    }
+    public void connect(String ip)
+    {
+        try {
+            socket=new Socket(ip,9876);//Connecting to a server with the ip
+            isConnected=true;//setting connected to true for use in the threads
+        } catch (IOException ex) {
+            Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(isConnected)//Only if the connection was successfull
         {
             try {
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -54,7 +60,27 @@ public class GameManager {
             inT=new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    
+                    String[] splitCommand=new String[2];
+                    while(isConnected)
+                    {
+                        try {//Disk:3
+                            splitCommand=(in.readLine()).split(":");
+                        } catch (IOException ex) {
+                            Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        if(splitCommand[0].equals("Disk"))
+                        {
+                            int xAxis=Integer.parseInt(splitCommand[1]);
+                            for(int i=0;i<6;i++)
+                            {
+                                if(slots[xAxis][i]==null)
+                                {
+                                    slots[xAxis][i]=new Disk();//Change to the network disk
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
