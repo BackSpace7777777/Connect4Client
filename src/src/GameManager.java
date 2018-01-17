@@ -1,5 +1,6 @@
-package src;
+    package src;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -21,6 +22,7 @@ public class GameManager {
     public GameManager()
     {
         isConnected=false;
+        slots[0][0]=new Disk(Color.BLUE,5);
     }
     public void draw(Graphics g)
     {
@@ -75,7 +77,7 @@ public class GameManager {
                             {
                                 if(slots[xAxis][i]==null)
                                 {
-                                    slots[xAxis][i]=new Disk();//Change to the network disk
+                                    slots[xAxis][i]=new Disk(Color.BLUE,5);//Change to the network disk
                                     break;
                                 }
                             }
