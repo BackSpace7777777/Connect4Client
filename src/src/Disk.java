@@ -34,7 +34,7 @@ public abstract class Disk {
     {
         g.setColor(c);
         diskFall();
-        g.fillOval(x, y, 30, 30);
+        g.fillOval(x, y, 71, 71);
     }
     
     public Color getColor(){

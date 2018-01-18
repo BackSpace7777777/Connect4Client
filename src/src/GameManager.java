@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 
 public class GameManager {
     private boolean turn,isConnected,inGame;
@@ -19,11 +20,15 @@ public class GameManager {
     private Thread inT,outT;
     private int mouseX,mouseY,gameNumber;
     private boolean mouseDown;
+    private ImageIcon board;
     public GameManager()
     {
         isConnected=false;
         inGame=false;
+        board=new ImageIcon("src/src/pictures/Connect4Board.png");
         //slots[0][0]=new Disk(Color.BLUE,5);
+        playPiece(0,1);
+        playPiece(0,1);
     }
     public void draw(Graphics g)
     {
@@ -37,6 +42,8 @@ public class GameManager {
                 }
             }
         }
+        //g.fillOval(19,170,71,71);//next one over is 109 next one down is 250
+        g.drawImage(board.getImage(), 5, 5, null);
     }
     public void mouseInformation(boolean md,int x,int y)
     {
@@ -102,17 +109,25 @@ public class GameManager {
     }
     private void playPiece(int x,int player)//-1 for other player 1 for local player x is the xcoord on the board
     {
+        //Actual x coord: c=(109-19)*x+(109-19)
+        //Actual y coord: c=(250-170)*y+(250-170)
         for(int i=0;i<6;i++)
         {
             if(slots[x][i]==null)
             {
                 if(player==1)
                 {
-                    slots[x][i]=new LocalDisk();
+                    int c=(109-19)*x+19;
+                    int target=(250-170)*i+70;
+                    target*=-1;
+                    target+=480;
+                    slots[x][i]=new LocalDisk(Color.RED,c,target);
+                    return;
                 }
                 else if(player==-1)
                 {
-                    slots[x][i]=new NetworkDisk();
+                    //slots[x][i]=new NetworkDisk();
+                    return;
                 }
             }
         }
