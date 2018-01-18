@@ -66,14 +66,14 @@ public class GameManager {
                     String[] splitCommand=new String[2];
                     while(isConnected)
                     {
-                        try {//Disk:3
+                        try {
                             splitCommand=(in.readLine()).split(":");
                         } catch (IOException ex) {
                             Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         if(splitCommand[0].equals("Game Number"))
                         {
-                            
+                            gameNumber=Integer.parseInt(splitCommand[1]);
                         }
                         else if(splitCommand[0].equals("Game Start"))
                         {
@@ -90,7 +90,8 @@ public class GameManager {
                         }
                         else if(splitCommand[0].equals("Piece"))
                         {
-                            
+                            String[] splitData=splitCommand[1].split(",");//Due to the network commands you have to split the incoming data again for the 2 pieces of data
+                            playPiece(Integer.parseInt(splitData[0]),Integer.parseInt(splitData[1]));
                         }
                     }
                 }
