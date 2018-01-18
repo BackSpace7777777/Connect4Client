@@ -27,8 +27,6 @@ public class GameManager {
         inGame=false;
         board=new ImageIcon("src/src/pictures/Connect4Board.png");
         //slots[0][0]=new Disk(Color.BLUE,5);
-        playPiece(0,1);
-        playPiece(0,1);
     }
     public void draw(Graphics g)
     {
