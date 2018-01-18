@@ -3,13 +3,13 @@ package src;
 import java.awt.Color;
 
 public class NetworkDisk extends Disk{
-    public NetworkDisk(Color in,int xloc,int ty)
+    public NetworkDisk(Color co, int xloc, int targety)
     {
-        super(in, xloc,ty);
+        super(co, xloc, targety);
     }
     @Override
     void diskFall() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(y<ty)y++;
     }
     
 }
