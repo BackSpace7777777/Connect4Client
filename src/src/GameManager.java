@@ -11,18 +11,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GameManager {
-    private boolean turn,isConnected;
+    private boolean turn,isConnected,inGame;
     private Disk[][] slots=new Disk[7][6];
     private Socket socket;
     private BufferedReader in;
     private DataOutputStream out;
     private Thread inT,outT;
-    private int mouseX,mouseY;
+    private int mouseX,mouseY,gameNumber;
     private boolean mouseDown;
     public GameManager()
     {
         isConnected=false;
-        slots[0][0]=new Disk(Color.BLUE,5);
+        inGame=false;
+        //slots[0][0]=new Disk(Color.BLUE,5);
     }
     public void draw(Graphics g)
     {
@@ -70,21 +71,49 @@ public class GameManager {
                         } catch (IOException ex) {
                             Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        if(splitCommand[0].equals("Disk"))
+                        if(splitCommand[0].equals("Game Number"))
                         {
-                            int xAxis=Integer.parseInt(splitCommand[1]);
-                            for(int i=0;i<6;i++)
-                            {
-                                if(slots[xAxis][i]==null)
-                                {
-                                    slots[xAxis][i]=new Disk(Color.BLUE,5);//Change to the network disk
-                                    break;
-                                }
-                            }
+                            
+                        }
+                        else if(splitCommand[0].equals("Game Start"))
+                        {
+                            inGame=true;
+                            turn=Boolean.parseBoolean(splitCommand[1]);
+                        }
+                        else if(splitCommand[0].equals("Turn"))
+                        {
+                            turn=Boolean.parseBoolean(splitCommand[1]);
+                        }
+                        else if(splitCommand[0].equals("Game Finished"))
+                        {
+                            inGame=false;
+                        }
+                        else if(splitCommand[0].equals("Piece"))
+                        {
+                            
                         }
                     }
                 }
             });
+            inT.start();
+        }
+        
+    }
+    private void playPiece(int x,int player)//-1 for other player 1 for local player x is the xcoord on the board
+    {
+        for(int i=0;i<6;i++)
+        {
+            if(slots[x][i]==null)
+            {
+                if(player==1)
+                {
+                    slots[x][i]=new LocalDisk();
+                }
+                else if(player==-1)
+                {
+                    slots[x][i]=new NetworkDisk();
+                }
+            }
         }
     }
 }
