@@ -24,24 +24,44 @@ public class GameManager {
     public GameManager()
     {
         isConnected=false;
-        inGame=false;
+        inGame=true;
         board=new ImageIcon("src/src/pictures/Connect4Board.png");
         //slots[0][0]=new Disk(Color.BLUE,5);
+        connect("localhost");
     }
     public void draw(Graphics g)
     {
-        for(int x=0;x<7;x++)
+        if(inGame)
         {
-            for(int y=0;y<6;y++)
+            for(int x=0;x<7;x++)
             {
-                if(slots[x][y]!=null)
+                for(int y=0;y<6;y++)
                 {
-                    slots[x][y].draw(g);//Drawing all of the slots only if they are not null
+                    if(slots[x][y]!=null)
+                    {
+                        slots[x][y].draw(g);//Drawing all of the slots only if they are not null
+                    }
+                }
+            }
+            //g.fillOval(19,170,71,71);//next one over is 109 next one down is 250
+            g.drawImage(board.getImage(), 5, 5, null);
+            //System.out.println(mouseX+","+mouseY);//20 to 90, 90 to 110
+//            if(mouseX>20&&mouseX<90&&mouseDown&&turn)
+//            {
+//                turn=false;
+//                playServer(0);
+//            }
+            for(int i=0;i<7;i++)
+            {
+                if(mouseX>(20+90*i)&&mouseX<(90+90*i)&&mouseDown&&turn)
+                {
+                    System.out.println(i);
+                    turn=false;
+                    playServer(i);
+                    break;
                 }
             }
         }
-        //g.fillOval(19,170,71,71);//next one over is 109 next one down is 250
-        g.drawImage(board.getImage(), 5, 5, null);
     }
     public void mouseInformation(boolean md,int x,int y)
     {
@@ -104,6 +124,24 @@ public class GameManager {
             inT.start();
         }
         
+    }
+    private void playServer(int x)
+    {
+        try {
+            if(isConnected)
+            out.writeBytes("Move:"+x+","+gameNumber);
+        } catch (IOException ex) {
+            Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void disconnect(int reason)
+    {
+        if(isConnected)
+        try {
+            out.writeBytes("Disconnect:"+reason);
+        } catch (IOException ex) {
+            Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     private void playPiece(int x,int player)//-1 for other player 1 for local player x is the xcoord on the board
     {

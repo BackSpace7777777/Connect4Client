@@ -13,8 +13,8 @@ public class Main {
     private static JFrame frame;
     private static JPanel panel;
     private static GameManager gm;
-    private static int x,y;
-    private static boolean md;
+    private static int x,y;//Mouse x and mouse y
+    private static boolean md;//Mouse Down
     public static void main(String[] args) {
         md=false;
         x=0;
