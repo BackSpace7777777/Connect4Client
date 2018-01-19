@@ -93,6 +93,7 @@ public class GameManager {
                     {
                         try {
                             splitCommand=(in.readLine()).split(":");
+                            System.out.println(splitCommand[0]+":"+splitCommand[1]);
                         } catch (IOException ex) {
                             Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -112,6 +113,7 @@ public class GameManager {
                         else if(splitCommand[0].equals("Game Finished"))
                         {
                             inGame=false;
+                            endGame(Boolean.parseBoolean(splitCommand[1]));
                         }
                         else if(splitCommand[0].equals("Piece"))
                         {
@@ -125,20 +127,26 @@ public class GameManager {
         }
         
     }
+    private void endGame(boolean in)
+    {
+        if(in)System.out.println("You win");
+        else System.out.println("You lose");
+        for(int x=0;x<7;x++)
+            for(int y=0;y<6;y++)
+                slots[x][y]=null;
+    }
     private void playServer(int x)
     {
         try {
-            if(isConnected)
-            out.writeBytes("Move:"+x+","+gameNumber);
+            out.writeBytes("Move:"+x+","+gameNumber+"\r");
         } catch (IOException ex) {
             Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     public void disconnect(int reason)
     {
-        if(isConnected)
         try {
-            out.writeBytes("Disconnect:"+reason);
+            out.writeBytes("Disconnect:"+reason+"\r");
         } catch (IOException ex) {
             Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -158,11 +166,17 @@ public class GameManager {
                     target*=-1;
                     target+=480;
                     slots[x][i]=new LocalDisk(Color.RED,c,target);
+                    System.out.println("Local Player Moved");
                     return;
                 }
                 else if(player==-1)
                 {
-                    //slots[x][i]=new NetworkDisk();
+                    int c=(109-19)*x+19;
+                    int target=(250-170)*i+70;
+                    target*=-1;
+                    target+=480;
+                    slots[x][i]=new NetworkDisk(Color.BLUE,c,target);
+                    System.out.println("Oppotition player moved");
                     return;
                 }
             }
