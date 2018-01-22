@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Main {
@@ -72,5 +73,13 @@ public class Main {
         panel.setBounds(0,0,frame.getWidth()+10,frame.getHeight()+10);
         frame.add(panel);
         frame.setVisible(true);
+    }
+    public static void messagePopup(String in)
+    {
+        JOptionPane.showMessageDialog(frame,in);
+    }
+    public static void turnTitle(String in)
+    {
+        frame.setTitle("Connect 4:"+in);
     }
 }

@@ -26,8 +26,9 @@ public class GameManager {
         isConnected=false;
         inGame=true;
         board=new ImageIcon("src/src/pictures/Connect4Board.png");
+        board=new ImageIcon(this.getClass().getResource("pictures/Connect4Board.png"));
         //slots[0][0]=new Disk(Color.BLUE,5);
-        connect("localhost");
+        connect("99.233.168.52");
     }
     public void draw(Graphics g)
     {
@@ -74,8 +75,9 @@ public class GameManager {
         try {
             socket=new Socket(ip,9876);//Connecting to a server with the ip
             isConnected=true;//setting connected to true for use in the threads
+            Main.turnTitle("Waiting for game");
         } catch (IOException ex) {
-            Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
+            Main.messagePopup("Could not connect: " + ex);
         }
         if(isConnected)//Only if the connection was successfull
         {
@@ -105,15 +107,28 @@ public class GameManager {
                         {
                             inGame=true;
                             turn=Boolean.parseBoolean(splitCommand[1]);
+                            if(turn)
+                            {
+                                Main.messagePopup("New Game it is your turn");
+                                Main.turnTitle("Your turn");
+                            }
+                            else 
+                            {
+                                Main.messagePopup("New Game it is the other players turn");
+                                Main.turnTitle("Other players turn");
+                            }
                         }
                         else if(splitCommand[0].equals("Turn"))
                         {
                             turn=Boolean.parseBoolean(splitCommand[1]);
+                            if(turn)Main.turnTitle("Your turn");
+                            else Main.turnTitle("Other players turn");
                         }
                         else if(splitCommand[0].equals("Game Finished"))
                         {
                             inGame=false;
                             endGame(Boolean.parseBoolean(splitCommand[1]));
+                            Main.turnTitle("Waiting for game");
                         }
                         else if(splitCommand[0].equals("Piece"))
                         {
@@ -129,8 +144,16 @@ public class GameManager {
     }
     private void endGame(boolean in)
     {
-        if(in)System.out.println("You win");
-        else System.out.println("You lose");
+        if(in)
+        {
+            System.out.println("You win");
+            Main.messagePopup("You win");
+        }
+        else 
+        {
+            System.out.println("You lose");
+            Main.messagePopup("You lose");
+        }
         for(int x=0;x<7;x++)
             for(int y=0;y<6;y++)
                 slots[x][y]=null;
