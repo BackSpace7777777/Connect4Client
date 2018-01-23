@@ -28,7 +28,7 @@ public class GameManager {
         board=new ImageIcon("src/src/pictures/Connect4Board.png");
         board=new ImageIcon(this.getClass().getResource("pictures/Connect4Board.png"));
         //slots[0][0]=new Disk(Color.BLUE,5);
-        connect("99.233.168.52");
+        connect("localhost");
     }
     public void draw(Graphics g)
     {
@@ -109,20 +109,20 @@ public class GameManager {
                             turn=Boolean.parseBoolean(splitCommand[1]);
                             if(turn)
                             {
-                                Main.messagePopup("New Game it is your turn");
+                                Main.messagePopup("New Game: it is your turn");
                                 Main.turnTitle("Your turn");
                             }
                             else 
                             {
-                                Main.messagePopup("New Game it is the other players turn");
-                                Main.turnTitle("Other players turn");
+                                Main.messagePopup("New Game: it is the other players turn");
+                                Main.turnTitle("Other player's turn");
                             }
                         }
                         else if(splitCommand[0].equals("Turn"))
                         {
                             turn=Boolean.parseBoolean(splitCommand[1]);
                             if(turn)Main.turnTitle("Your turn");
-                            else Main.turnTitle("Other players turn");
+                            else Main.turnTitle("Other player's turn");
                         }
                         else if(splitCommand[0].equals("Game Finished"))
                         {
@@ -135,12 +135,26 @@ public class GameManager {
                             String[] splitData=splitCommand[1].split(",");//Due to the network commands you have to split the incoming data again for the 2 pieces of data
                             playPiece(Integer.parseInt(splitData[0]),Integer.parseInt(splitData[1]));
                         }
+                        else if(splitCommand[0].equals("Dropped"))
+                        {
+                            disconnect();
+                        }
                     }
                 }
             });
             inT.start();
         }
         
+    }
+    private void disconnect()
+    {
+        isConnected=false;
+        inGame=false;
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            System.out.println("Socket may have already been closed server side");
+        }
     }
     private void endGame(boolean in)
     {
