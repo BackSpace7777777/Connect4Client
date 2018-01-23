@@ -13,20 +13,20 @@ import javax.swing.ImageIcon;
 
 public class GameManager {
     private boolean turn,isConnected,inGame;
-    private Disk[][] slots=new Disk[7][6];
-    private Socket socket;
-    private BufferedReader in;
-    private DataOutputStream out;
-    private Thread inT,outT;
-    private int mouseX,mouseY,gameNumber;
-    private boolean mouseDown;
-    private ImageIcon board;
-    private final String connectIP="localhost";
+    private Disk[][] slots=new Disk[7][6];//Array with disks for local manipulation
+    private Socket socket;//Used to connect to the server
+    private BufferedReader in;//Gets the input from server
+    private DataOutputStream out;//Sends data to the server
+    private Thread inT;//This thread handles incoming data from the server
+    private int mouseX,mouseY,gameNumber;//Keeps track of the mouse x and y and what game number the server has assigned
+    private boolean mouseDown;//Keeps track of the left mouse button
+    private ImageIcon board;//Picture of the board
+    private final String connectIP="localhost";//Ip to connect to
     public GameManager()
+            //Loads data then connects to the server
     {
         isConnected=false;
-        inGame=true;
-        board=new ImageIcon("src/src/pictures/Connect4Board.png");
+        inGame=false;
         board=new ImageIcon(this.getClass().getResource("pictures/Connect4Board.png"));
         //slots[0][0]=new Disk(Color.BLUE,5);
         connect(connectIP);
@@ -53,7 +53,7 @@ public class GameManager {
 //                turn=false;
 //                playServer(0);
 //            }
-            for(int i=0;i<7;i++)
+            for(int i=0;i<7;i++)//Gets the mouse input and asks the server to play a peice at a location relitive to the mouse
             {
                 if(mouseX>(20+90*i)&&mouseX<(90+90*i)&&mouseDown&&turn)
                 {
@@ -65,13 +65,13 @@ public class GameManager {
             }
         }
     }
-    public void mouseInformation(boolean md,int x,int y)
+    public void mouseInformation(boolean md,int x,int y)//Gets mouse information from class Main
     {
         mouseDown=md;
         mouseX=x;
         mouseY=y;
     }
-    public void connect(String ip)
+    public void connect(String ip)//Connect to server code
     {
         try {
             socket=new Socket(ip,9876);//Connecting to a server with the ip
@@ -82,24 +82,25 @@ public class GameManager {
         }
         if(isConnected)//Only if the connection was successfull
         {
-            try {
+            try {//Gets the in and out from the server
                 in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out=new DataOutputStream(socket.getOutputStream());
             } catch (IOException ex) {
                 Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
             }
-            inT=new Thread(new Runnable() {
+            inT=new Thread(new Runnable() {//Sets up incoming thread
                 @Override
                 public void run() {
                     String[] splitCommand=new String[2];
                     while(isConnected)
                     {
                         try {
-                            splitCommand=(in.readLine()).split(":");
+                            splitCommand=(in.readLine()).split(":");//Splits information into 2 strings, position 0 being the command and 1 being the data
                             System.out.println(splitCommand[0]+":"+splitCommand[1]);
                         } catch (IOException ex) {
                             Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        //The following if statements handle the commands the server gives to the client
                         if(splitCommand[0].equals("Game Number"))
                         {
                             gameNumber=Integer.parseInt(splitCommand[1]);
@@ -147,18 +148,12 @@ public class GameManager {
         }
         
     }
-    private void disconnect()
+    private void disconnect()//Method to disconnect from the server and reconnect
     {
-        isConnected=false;
-        inGame=false;
-        try {
-            socket.close();
-        } catch (IOException ex) {
-            System.out.println("Socket may have already been closed server side");
-        }
+        this.disconnect(1);
         connect(connectIP);
     }
-    private void endGame(boolean in)
+    private void endGame(boolean in)//Resets everything and gives a prompt as to who won or lost
     {
         if(in)
         {
@@ -174,7 +169,7 @@ public class GameManager {
             for(int y=0;y<6;y++)
                 slots[x][y]=null;
     }
-    private void playServer(int x)
+    private void playServer(int x)//Sends the clients play to the server
     {
         try {
             out.writeBytes("Move:"+x+","+gameNumber+"\r");
@@ -182,7 +177,7 @@ public class GameManager {
             Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void disconnect(int reason)
+    public void disconnect(int reason)//Disconnect with a reason as to why there was a disconnect
     {
         try {
             out.writeBytes("Disconnect:"+reason+"\r");
@@ -198,7 +193,7 @@ public class GameManager {
         {
             if(slots[x][i]==null)
             {
-                if(player==1)
+                if(player==1)//Local player
                 {
                     int c=(109-19)*x+19;
                     int target=(250-170)*i+70;
@@ -208,14 +203,14 @@ public class GameManager {
                     System.out.println("Local Player Moved");
                     return;
                 }
-                else if(player==-1)
+                else if(player==-1)//Player over the network
                 {
                     int c=(109-19)*x+19;
                     int target=(250-170)*i+70;
                     target*=-1;
                     target+=480;
                     slots[x][i]=new NetworkDisk(Color.BLUE,c,target);
-                    System.out.println("Oppotition player moved");
+                    System.out.println("Opposition player moved");
                     return;
                 }
             }

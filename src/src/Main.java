@@ -21,11 +21,11 @@ public class Main {
         x=0;
         y=0;
         frame=new JFrame("Connect 4");//Setting up the frame
-        frame.setDefaultCloseOperation(3);
+        frame.setDefaultCloseOperation(3);//Close on press of the top right x button
         frame.setResizable(false);
-        frame.setLayout(null);
+        frame.setLayout(null);//Allows you to use set bounds in the coord system
         frame.setSize(650,519);
-        gm=new GameManager();
+        gm=new GameManager();//Make a new Game Manager of the class GameManager.java
         panel=new JPanel()
         {
             @Override
@@ -42,7 +42,7 @@ public class Main {
                 repaint();
             }
         };
-        panel.addMouseMotionListener(new MouseMotionListener() {
+        panel.addMouseMotionListener(new MouseMotionListener() {//Gets mouse input
             @Override
             public void mouseDragged(MouseEvent me) {
                 x=me.getX();
@@ -70,7 +70,7 @@ public class Main {
                 gm.mouseInformation(md, x, y);
             }
         });
-        panel.setBounds(0,0,frame.getWidth()+10,frame.getHeight()+10);
+        panel.setBounds(0,0,frame.getWidth()+10,frame.getHeight()+10);//Same as setting the size but as an object in the frame, which is we set it to a null layout
         frame.add(panel);
         frame.setVisible(true);
     }
@@ -80,6 +80,6 @@ public class Main {
     }
     public static void turnTitle(String in)
     {
-        frame.setTitle("Connect 4:"+in);
+        frame.setTitle("Connect 4:"+in);//Setting the title
     }
 }
