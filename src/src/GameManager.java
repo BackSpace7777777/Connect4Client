@@ -21,6 +21,7 @@ public class GameManager {
     private int mouseX,mouseY,gameNumber;
     private boolean mouseDown;
     private ImageIcon board;
+    private final String connectIP="localhost";
     public GameManager()
     {
         isConnected=false;
@@ -28,7 +29,7 @@ public class GameManager {
         board=new ImageIcon("src/src/pictures/Connect4Board.png");
         board=new ImageIcon(this.getClass().getResource("pictures/Connect4Board.png"));
         //slots[0][0]=new Disk(Color.BLUE,5);
-        connect("localhost");
+        connect(connectIP);
     }
     public void draw(Graphics g)
     {
@@ -155,6 +156,7 @@ public class GameManager {
         } catch (IOException ex) {
             System.out.println("Socket may have already been closed server side");
         }
+        connect(connectIP);
     }
     private void endGame(boolean in)
     {

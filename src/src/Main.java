@@ -76,7 +76,7 @@ public class Main {
     }
     public static void messagePopup(String in)
     {
-        JOptionPane.showMessageDialog(frame,in);
+        JOptionPane.showMessageDialog(null,in);
     }
     public static void turnTitle(String in)
     {
